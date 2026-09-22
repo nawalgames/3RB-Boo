@@ -26,7 +26,7 @@ import {
 
 import {
   handleGuildMemberRemove,
-} from "./handlers/guildMemberRemove.js"; // <-- أضفنا استيراد ملف المغادرة
+} from "./handlers/guildMemberRemove.js";
 
 import {
   setupActivityTracking,
@@ -52,6 +52,16 @@ client.once(
     console.info(
       `Bot owner configured: ${env.ownerId}.`,
     );
+
+    // [إضافة هامة] جلب وتخزين جميع أعضاء السيرفر مؤقتاً عند التشغيل لضمان عمل ميزة المغادرة مع الأعضاء القدامى أيضاً
+    for (const [id, guild] of client.guilds.cache) {
+      try {
+        await guild.members.fetch();
+        console.info(`Fetched members for guild: ${guild.name}`);
+      } catch (error) {
+        console.error(`Failed to fetch members for guild ${guild.name}:`, error);
+      }
+    }
 
     await initializeInviteCache(client);
 
